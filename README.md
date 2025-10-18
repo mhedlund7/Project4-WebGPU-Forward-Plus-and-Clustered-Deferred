@@ -13,6 +13,7 @@ WebGL Forward+ and Clustered Deferred Shading
 
 ### Demo Video/GIF
 
+![Demo Gif](img/Sponza.gif)
 
 # Overview
 In this project I implement three shading paths, Naive, Forward+, and Clustered Deferred, for the Sponza scene with a high number of point lights. The project can be run fully in the browser through WebGPU.
