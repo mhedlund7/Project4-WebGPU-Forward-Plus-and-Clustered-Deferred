@@ -86,9 +86,9 @@ export class Camera {
     static readonly farPlane = 1000;
 
     // Adding cluster dims
-    static readonly clusterWidth = 16;
-    static readonly clusterHeight = 9;
-    static readonly zSlices = 8;
+    static readonly clusterWidth = 64;
+    static readonly clusterHeight = 64;
+    static readonly zSlices = 32;
 
     static readonly maxLightsPerCluster = 100;
 
