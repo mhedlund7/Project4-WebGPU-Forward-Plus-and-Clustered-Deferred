@@ -2,15 +2,15 @@
 
 // Similar to the Forward+ fragment shader, but with vertex information coming from the G-buffer instead.
 
-@group(${bindGroup_scene}) @binding(0) var<uniform> cameraUniforms: CameraUniforms;
-@group(${bindGroup_scene}) @binding(1) var<storage, read> lightSet: LightSet;
-@group(${bindGroup_scene}) @binding(2) var<storage, read> clusterNumLights: ClusterNumLights;
-@group(${bindGroup_scene}) @binding(3) var<storage, read> clusterLightIndices: ClusterLightIndices;
+@group(0) @binding(0) var<uniform> cameraUniforms: CameraUniforms;
+@group(0) @binding(1) var<storage, read> lightSet: LightSet;
+@group(0) @binding(2) var<storage, read> clusterNumLights: ClusterNumLights;
+@group(0) @binding(3) var<storage, read> clusterLightIndices: ClusterLightIndices;
 
-@group(${bingGroup_gBuffer}) @binding(0) var gAlbedo: texture_2d<f32>;
-@group(${bingGroup_gBuffer}) @binding(1) var gNormal: texture_2d<f32>;
-@group(${bingGroup_gBuffer}) @binding(2) var gPosition: texture_2d<f32>;
-@group(${bingGroup_gBuffer}) @binding(3) var gSampler: sampler;
+@group(1) @binding(0) var gAlbedo: texture_2d<f32>;
+@group(1) @binding(1) var gNormal: texture_2d<f32>;
+@group(1) @binding(2) var gPosition: texture_2d<f32>;
+@group(1) @binding(3) var gSampler: sampler;
 
 struct FragmentInput
 {

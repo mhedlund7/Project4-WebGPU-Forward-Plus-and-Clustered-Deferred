@@ -24,10 +24,10 @@
 
 // Need lights array
 // Need to output cluster data structure
-@group(${bindGroup_cluster}) @binding(0) var<uniform> cameraUniforms: CameraUniforms;
-@group(${bindGroup_cluster}) @binding(1) var<storage, read> lightSet: LightSet;
-@group(${bindGroup_cluster}) @binding(2) var<storage, read_write> outClusterNumLights: ClusterNumLights;
-@group(${bindGroup_cluster}) @binding(3) var<storage, read_write> outClusterLightIndices: ClusterLightIndices;
+@group(0) @binding(0) var<uniform> cameraUniforms: CameraUniforms;
+@group(0) @binding(1) var<storage, read> lightSet: LightSet;
+@group(0) @binding(2) var<storage, read_write> outClusterNumLights: ClusterNumLights;
+@group(0) @binding(3) var<storage, read_write> outClusterLightIndices: ClusterLightIndices;
 
 const lightRadius : f32 = 2.0;
 
@@ -111,7 +111,7 @@ fn sphereBoxIntersection(sphereCenter: vec3f, radius: f32, minCorner: vec3f, max
     return dist <= radius * radius;
 }
 
-@compute @workgroup_size(${clusterWorkgroupSize})
+@compute @workgroup_size(128)
 fn main(@builtin(global_invocation_id) index: vec3u) {
     let id = index.x;
     let dims = calculateClusterDims(cameraUniforms);

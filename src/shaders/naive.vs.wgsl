@@ -4,8 +4,8 @@
 // make sure to use ${bindGroup_scene} for the group
 
 
-@group(${bindGroup_model}) @binding(0) var<uniform> modelMat: mat4x4f;
-@group(${bindGroup_scene}) @binding(0) var<uniform> cameraUniforms: CameraUniforms;
+@group(1) @binding(0) var<uniform> modelMat: mat4x4f;
+@group(0) @binding(0) var<uniform> cameraUniforms: CameraUniforms;
 
 struct VertexInput
 {
