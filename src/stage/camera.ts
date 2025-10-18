@@ -3,14 +3,69 @@ import { toRadians } from "../math_util";
 import { device, canvas, fovYDegrees, aspectRatio } from "../renderer";
 
 class CameraUniforms {
-    readonly buffer = new ArrayBuffer(16 * 4);
+    readonly buffer = new ArrayBuffer((72) * 4);
     private readonly floatView = new Float32Array(this.buffer);
 
-    set viewProjMat(mat: Float32Array) {
+    set viewMat(mat: Float32Array) {
         // TODO-1.1: set the first 16 elements of `this.floatView` to the input `mat`
+        for (let i = 0; i < 16; i++) {
+            this.floatView[i] = mat[i];
+        }
     }
 
     // TODO-2: add extra functions to set values needed for light clustering here
+
+    set projMat(mat: Float32Array) {
+        for (let i = 0; i < 16; i++) {
+            this.floatView[16 + i] = mat[i];
+        }
+    }
+
+    set invProjMat(mat: Float32Array) {
+        for (let i = 0; i < 16; i++) {
+            this.floatView[32 + i] = mat[i];
+        }
+    }
+
+    set invViewMat(mat: Float32Array) {
+        for (let i = 0; i < 16; i++) {
+            this.floatView[48 + i] = mat[i];
+        }
+    }
+
+    set screenWidth(val: number) {
+        this.floatView[64] = val;
+    }
+
+    set screenHeight(val: number) {
+        this.floatView[65] = val;
+    }
+
+    set nearZ(val: number) {
+        this.floatView[66] = val;
+    }
+
+    set farZ(val: number) {
+        this.floatView[67] = val;
+    }
+
+    set clusterWidth(val: number) {
+        this.floatView[68] = val;
+    }
+
+    set clusterHeight(val: number) {
+        this.floatView[69] = val;
+    }
+
+    // z bound of cluster closest to camera. Future clusters grow exponentially
+    set zSlices(val: number) {
+        this.floatView[70] = val;
+    }
+
+    set maxLightsPerCluster(val: number) {
+        this.floatView[71] = val;
+    }
+
 }
 
 export class Camera {
@@ -30,6 +85,13 @@ export class Camera {
     static readonly nearPlane = 0.1;
     static readonly farPlane = 1000;
 
+    // Adding cluster dims
+    static readonly clusterWidth = 16;
+    static readonly clusterHeight = 9;
+    static readonly zSlices = 8;
+
+    static readonly maxLightsPerCluster = 100;
+
     keys: { [key: string]: boolean } = {};
 
     constructor () {
@@ -38,6 +100,12 @@ export class Camera {
         // check `lights.ts` for examples of using `device.createBuffer()`
         //
         // note that you can add more variables (e.g. inverse proj matrix) to this buffer in later parts of the assignment
+
+        this.uniformsBuffer = device.createBuffer({
+            label: "Camera Uniforms Buffer",
+            size: this.uniforms.buffer.byteLength,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+        });
 
         this.projMat = mat4.perspective(toRadians(fovYDegrees), aspectRatio, Camera.nearPlane, Camera.farPlane);
 
@@ -127,12 +195,28 @@ export class Camera {
 
         const lookPos = vec3.add(this.cameraPos, vec3.scale(this.cameraFront, 1));
         const viewMat = mat4.lookAt(this.cameraPos, lookPos, [0, 1, 0]);
-        const viewProjMat = mat4.mul(this.projMat, viewMat);
         // TODO-1.1: set `this.uniforms.viewProjMat` to the newly calculated view proj mat
+        this.uniforms.viewMat = viewMat;
 
         // TODO-2: write to extra buffers needed for light clustering here
+        const invProjMat = mat4.invert(this.projMat);
+        const invViewMat = mat4.invert(viewMat);
+        this.uniforms.projMat = this.projMat;
+        this.uniforms.invViewMat = invViewMat;
+        this.uniforms.invProjMat = invProjMat;
+        this.uniforms.screenHeight = canvas.height;
+        this.uniforms.screenWidth = canvas.width;
+        this.uniforms.nearZ = Camera.nearPlane;
+        this.uniforms.farZ = Camera.farPlane;
+
+        this.uniforms.clusterHeight = Camera.clusterHeight;
+        this.uniforms.clusterWidth = Camera.clusterWidth;
+        this.uniforms.zSlices = Camera.zSlices;
+        this.uniforms.maxLightsPerCluster = 128.0;
+
 
         // TODO-1.1: upload `this.uniforms.buffer` (host side) to `this.uniformsBuffer` (device side)
         // check `lights.ts` for examples of using `device.queue.writeBuffer()`
+        device.queue.writeBuffer(this.uniformsBuffer, 0, this.uniforms.buffer);
     }
 }

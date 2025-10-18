@@ -10,10 +10,34 @@ struct LightSet {
     lights: array<Light>
 }
 
+// Structs for cluster info
+struct ClusterNumLights {
+    clusterNumLights: array<u32>
+}
+
+struct ClusterLightIndices {
+    clusterLightIndices: array<u32>
+}
+
 // TODO-2: you may want to create a ClusterSet struct similar to LightSet
+
+// Have separate structs for cluster light counts and cluster indices so can have two arrays
 
 struct CameraUniforms {
     // TODO-1.3: add an entry for the view proj mat (of type mat4x4f)
+    viewMat: mat4x4f,
+    // Added. more to camera uniforms
+    projMat: mat4x4f,
+    invProjMat: mat4x4f,
+    invViewMat: mat4x4f,
+    screenWidth: f32,
+    screenHeight: f32,
+    nearZ: f32,
+    farZ: f32,
+    clusterWidth: f32,
+    clusterHeight: f32,
+    zSlices: f32,
+    maxLightsPerCluster: f32
 }
 
 // CHECKITOUT: this special attenuation function ensures lights don't affect geometry outside the maximum light radius
@@ -27,4 +51,17 @@ fn calculateLightContrib(light: Light, posWorld: vec3f, nor: vec3f) -> vec3f {
 
     let lambert = max(dot(nor, normalize(vecToLight)), 0.f);
     return light.color * lambert * rangeAttenuation(distToLight);
+}
+
+// Common helper functions
+
+fn calculateClusterDims(camera: CameraUniforms) -> vec3u {
+    let x = u32(ceil(camera.screenWidth  / camera.clusterWidth));
+    let y = u32(ceil(camera.screenHeight / camera.clusterHeight));
+    let z = u32(camera.zSlices);
+    return vec3u(x, y, z);
+}
+
+fn clusterIndex(xIndex: u32, yIndex: u32, zIndex: u32, dimensions: vec3u) -> u32{
+    return (zIndex * dimensions.y * dimensions.x) + (yIndex * dimensions.x) + xIndex;
 }
