@@ -23,7 +23,7 @@ fn main(in: FragmentInput) -> @location(0) vec4f {
 
     // sample
     let albedo = textureSample(gAlbedo, gSampler, in.uv);
-    if (albedo.a < 0.5f) {
+    if (albedo.a < 0.5) {
         discard;
     }
     let normal = textureSample(gNormal, gSampler, in.uv).xyz;

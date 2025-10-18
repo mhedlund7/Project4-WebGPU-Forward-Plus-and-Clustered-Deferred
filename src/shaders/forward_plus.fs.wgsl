@@ -34,7 +34,7 @@ struct FragmentInput
 @fragment
 fn main(in: FragmentInput) -> @location(0) vec4f {
     let diffuseColor = textureSample(diffuseTex, diffuseTexSampler, in.uv);
-    if (diffuseColor.a < 0.5f) {
+    if (diffuseColor.a < 0.5) {
         discard;
     }
 

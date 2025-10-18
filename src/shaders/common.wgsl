@@ -42,14 +42,14 @@ struct CameraUniforms {
 
 // CHECKITOUT: this special attenuation function ensures lights don't affect geometry outside the maximum light radius
 fn rangeAttenuation(distance: f32) -> f32 {
-    return clamp(1.f - pow(distance / ${lightRadius}, 4.f), 0.f, 1.f) / (distance * distance);
+    return clamp(1.0 - pow(distance / ${lightRadius}, 4.0), 0.0, 1.0) / (distance * distance);
 }
 
 fn calculateLightContrib(light: Light, posWorld: vec3f, nor: vec3f) -> vec3f {
     let vecToLight = light.pos - posWorld;
     let distToLight = length(vecToLight);
 
-    let lambert = max(dot(nor, normalize(vecToLight)), 0.f);
+    let lambert = max(dot(nor, normalize(vecToLight)), 0.0);
     return light.color * lambert * rangeAttenuation(distToLight);
 }
 
