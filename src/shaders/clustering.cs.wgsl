@@ -29,7 +29,7 @@
 @group(${bindGroup_cluster}) @binding(2) var<storage, read_write> outClusterNumLights: ClusterNumLights;
 @group(${bindGroup_cluster}) @binding(3) var<storage, read_write> outClusterLightIndices: ClusterLightIndices;
 
-const lightRadius : f32 = ${lightRadius};
+const lightRadius : f32 = 2.0;
 
 // Compute z bounds of frustrum from the cluster's z index
 fn getZBounds(zIndex: u32, dimensions: vec3u) -> vec2f {
